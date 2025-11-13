@@ -24,7 +24,7 @@ export class DiagnosisService {
   submitExpertAnswers(payload: ExpertFormPayload): Observable<Diagnosis> {
     // enviamos todo el objeto con "answers"
     return this.http.post<Diagnosis>(
-        `${this.apiUrl}/students/${payload.studentId}/answers`,
+        `${this.apiUrl}/students/${payload.studentId}/diagnoses`,
         payload
     );
   }

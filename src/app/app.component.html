@@ -1,0 +1,79 @@
+﻿<div class="page">
+  <header class="page__header">
+    <p class="eyebrow">Formulario del sistema experto</p>
+    <h1>{{ title }}</h1>
+    <p>Completa cada pregunta con la información disponible del estudiante y envía las respuestas para generar un diagnóstico preliminar.</p>
+  </header>
+
+  <form class="expert-form" [formGroup]="expertForm" (ngSubmit)="onSubmit()">
+    <div class="question">
+      <label for="studentId">ID del estudiante</label>
+      <input id="studentId" type="number" min="1" placeholder="Ej. 42" formControlName="studentId" />
+      <p class="error" *ngIf="expertForm.get('studentId')?.invalid && expertForm.get('studentId')?.touched">
+        Ingresa un ID válido.
+      </p>
+    </div>
+
+    <ng-container *ngFor="let question of questions; trackBy: trackByQuestion">
+      <div class="section-label" *ngIf="question.sectionLabel">{{ question.sectionLabel }}</div>
+      <div class="question">
+        <label [for]="question.id">{{ question.label }}</label>
+
+        <ng-container [ngSwitch]="question.type">
+          <div *ngSwitchCase="'radio'" class="option-group">
+            <label
+              class="option"
+              *ngFor="let option of question.options"
+              [attr.for]="question.id + '-' + option.value"
+              [class.option--selected]="expertForm.get(question.id)?.value === option.value"
+            >
+              <input
+                type="radio"
+                [id]="question.id + '-' + option.value"
+                [value]="option.value"
+                [formControlName]="question.id"
+              />
+              <span>{{ option.label }}</span>
+            </label>
+          </div>
+
+          <select *ngSwitchCase="'select'" [id]="question.id" [formControlName]="question.id">
+            <option value="" disabled>Selecciona una opción</option>
+            <option *ngFor="let option of question.options" [value]="option.value">{{ option.label }}</option>
+          </select>
+
+          <input
+            *ngSwitchCase="'text'"
+            type="text"
+            [id]="question.id"
+            [placeholder]="question.placeholder"
+            [formControlName]="question.id"
+          />
+
+          <textarea
+            *ngSwitchCase="'textarea'"
+            rows="4"
+            [id]="question.id"
+            [placeholder]="question.placeholder"
+            [formControlName]="question.id"
+          ></textarea>
+        </ng-container>
+
+        <p class="error" *ngIf="expertForm.get(question.id)?.invalid && expertForm.get(question.id)?.touched">
+          Este campo es obligatorio.
+        </p>
+      </div>
+    </ng-container>
+
+    <button type="submit" [disabled]="isSubmitting()">
+      {{ isSubmitting() ? 'Enviando...' : 'Enviar respuestas' }}
+    </button>
+
+    <p class="error" *ngIf="submitError()">{{ submitError() }}</p>
+    <div class="success" *ngIf="hasResult() && diagnosis()">
+      <h2>Diagnóstico recibido</h2>
+      <p><strong>Nivel:</strong> {{ diagnosis()?.difficultyLevel || 'N/D' }}</p>
+      <p><strong>Recomendación:</strong> {{ diagnosis()?.recommendation || 'N/D' }}</p>
+    </div>
+  </form>
+</div>

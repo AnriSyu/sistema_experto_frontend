@@ -21,11 +21,14 @@ export class DiagnosisService {
     return this.http.post<Diagnosis>(`${this.apiUrl}/diagnosis/${studentId}`, {});
   }
 
-  submitExpertAnswers(payload: ExpertFormPayload): Observable<Diagnosis> {
-    // enviamos todo el objeto con "answers"
-    return this.http.post<Diagnosis>(
-        `${this.apiUrl}/students/${payload.studentId}/diagnoses`,
+  submitExpertAnswers(studentId: number, answers: { exerciseNumber: number; answer: string }[]): Observable<Diagnosis[]> {
+    const payload = { studentId, answers }; // ✅ envolverlo en un objeto
+    return this.http.post<Diagnosis[]>(
+        `${this.apiUrl}/students/${studentId}/metrics`,
         payload
     );
   }
+
+
+
 }

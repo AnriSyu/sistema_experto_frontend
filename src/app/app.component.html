@@ -70,10 +70,16 @@
     </button>
 
     <p class="error" *ngIf="submitError()">{{ submitError() }}</p>
-    <div class="success" *ngIf="hasResult() && diagnosis()">
-      <h2>Diagnóstico recibido</h2>
-      <p><strong>Nivel:</strong> {{ diagnosis()?.difficultyLevel || 'N/D' }}</p>
-      <p><strong>Recomendación:</strong> {{ diagnosis()?.recommendation || 'N/D' }}</p>
-    </div>
+      <div class="success" *ngIf="diagnoses()?.length">
+          <h2>Diagnósticos recibidos</h2>
+          <ul>
+              <li *ngFor="let d of diagnoses()">
+                  <strong>Nivel:</strong> {{ d.difficultyLevel }} |
+                  <strong>Recomendación:</strong> {{ d.recommendation }}
+              </li>
+          </ul>
+      </div>
+
+
   </form>
 </div>
